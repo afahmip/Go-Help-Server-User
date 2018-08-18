@@ -75,7 +75,7 @@ class UserRequestsController < ApplicationController
         end
       end
     }
-    
+
     json_response(@result.reverse)
   end
 
