@@ -60,7 +60,7 @@ class UserRequestsController < ApplicationController
   end
 
   # POST /retrieve_request
-  def filter_request
+  def retrieve_request
     @user_requests = UserRequest.all
     @result = []
 
