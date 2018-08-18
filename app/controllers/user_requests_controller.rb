@@ -10,7 +10,7 @@ class UserRequestsController < ApplicationController
   # GET /get_user_requests
   def index
     @user_requests = UserRequest.all
-    @user_requests.sort_by(&:created_at)
+    @user_requests.order! 'created_at DESC'
     json_response(@user_requests)
   end
 
@@ -75,7 +75,8 @@ class UserRequestsController < ApplicationController
         end
       end
     }
-    json_response(@result)
+    
+    json_response(@result.reverse)
   end
 
   private
