@@ -70,7 +70,7 @@ jobs:
       - run:
           name: Deploy Master to Heroku
           command: |
-            https://git.heroku.com/staging-gohelp-user.git master
+            git push https://heroku:5dff006c-8fc1-4596-a8fd-fd7a74d1fc66@git.heroku.com/staging-gohelp-user.git master
 
 workflows:
   version: 2
