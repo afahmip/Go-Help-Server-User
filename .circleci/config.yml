@@ -1,0 +1,90 @@
+version: 2
+jobs:
+  build:
+    parallelism: 3
+    working_directory: ~/media/fahmi/DATA/Internship/Compfest/Academy/finalproject/Go-Help-Server-User
+    docker:
+      - image: circleci/ruby:2.5.1-stretch-node-browsers
+        environment:
+          BUNDLE_JOBS: 3
+          BUNDLE_RETRY: 3
+          BUNDLE_PATH: vendor/bundle
+          PGHOST: 127.0.0.1
+          PGUSER: fahmi
+          RAILS_ENV: test
+      - image: circleci/postgres:9.5-alpine
+        environment:
+          POSTGRES_USER: fahmi
+          POSTGRES_DB: gohelp-user-dev
+
+    steps:
+      - checkout
+
+      # Which version of bundler?
+      - run:
+          name: Which bundler?
+          command: bundle -v
+
+      # Restore bundle cache
+      - restore_cache:
+          keys:
+            - Go-Help-Server-User-v1-{{ checksum "Gemfile.lock" }}
+            - Go-Help-Server-User-v1-
+
+      - run:
+          name: Bundle Install
+          command: bundle check || bundle install
+
+      # Store bundle cache
+      - save_cache:
+          key: Go-Help-Server-User-v1-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+      - run:
+          name: Database create
+          command: bundle exec rake db:create
+
+      - run:
+          name: Database setup
+          command: bundle exec rake db:schema:load
+
+      - run:
+          name: Run rspec in parallel
+          command: |
+            bundle exec rspec --profile 10 \
+                              --format RspecJunitFormatter \
+                              --out test_results/rspec.xml \
+                              --format progress \
+                              $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+
+  deploy:
+    docker:
+      - image: buildpack-deps:trusty
+    steps:
+      - checkout
+      - run:
+          name: Deploy Master to Heroku
+          command: |
+            https://git.heroku.com/staging-gohelp-user.git master
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+
+general:
+  branches:
+    only:
+      - master
