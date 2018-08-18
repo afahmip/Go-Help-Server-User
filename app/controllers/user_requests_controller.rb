@@ -47,6 +47,7 @@ class UserRequestsController < ApplicationController
     @user_request = UserRequest.find(params[:user_request_id])
     if not @user_request.helper_id
       @user_request.update(accept_request_params)
+      NotificationHelper.push_notification(@user_request.device_id, "You've got an Helper!")
       render json: {
           status: 200,
           message: "Request successfully accepted"
