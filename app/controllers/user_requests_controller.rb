@@ -10,6 +10,7 @@ class UserRequestsController < ApplicationController
   # GET /get_user_requests
   def index
     @user_requests = UserRequest.all
+    @user_requests.sort_by(&:created_at)
     json_response(@user_requests)
   end
 
