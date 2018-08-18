@@ -67,4 +67,79 @@ This part service that handles User and UserRequest. Here lies the API documenta
 	}
 	```
   
----  
+---
+
+## UserRequest    
+### Create new UserRequest    
+ - URL:  `/create_user_request` 
+ - Method: `POST` 
+ - Headers: `Content-Type: application/json`  
+ - Body    
+  
+	 | Field | Type | Description |    
+	 | ----- | ---- | ----------- |  
+	 | user_id | integer | User ID that creates the UserRequest |  
+	 | helper_type_id | integer | HelperType ID that the User wants |  
+	 | longitude | float | User's longitude coordinate |  
+	 | latitude | float | User's latitude coordinate |  
+	 | device_id | string | User device ID (Android) |  
+ - Response  
+	```  
+	{  
+		 "status": 200,
+		 "message": "User successfuly created" 
+	}
+	```
+  
+### Filter UserRequest based on Helper location and type
+ - URL:  `/retrieve_request` 
+ - Method: `POST` 
+ - Headers: `Content-Type: application/json`  
+ - Body    
+  
+	 | Field | Type | Description |    
+	 | ----- | ---- | ----------- |  
+	 | helper_type_id | integer | HelperType ID that the User wants |  
+	 | longitude | float | User's longitude coordinate |  
+	 | latitude | float | User's latitude coordinate |
+ - Response
+	```
+	[
+	    {
+		    "id",
+		    "user_id",
+		    "longitude",
+		    "latitude",
+		    "device_id",
+		    "created_at",
+		    "updated_at",
+		    "helper_type_id"
+		}
+	]
+	```
+
+### Accept UserRequest by ID
+ - URL:  `/accept_request` 
+ - Method: `POST` 
+ - Headers: `Content-Type: application/json`  
+ - Body    
+  
+	 | Field | Type | Description |    
+	 | ----- | ---- | ----------- |  
+	 | helper_id | integer | Helper ID that wants to accept the request |  
+	 | user_request_id | integer | UserRequest ID that wants to be accepted |  
+ - Response
+	- Success
+	```
+	{
+	    "status": 200,
+	    "message": "Request successfully accepted"
+	}
+	```
+	- Failed
+	```
+	{
+	    "status": 500,
+	    "message": "Request already been accepted"
+	}
+	```
